@@ -1,0 +1,12 @@
+# Rolling patch: one host at a time, stop if one fails
+- name: Rolling patch
+  hosts: "{{ target_site | default('all') }}"
+  become: true
+  serial: 1
+  max_fail_percentage: 0
+  tasks:
+    - name: Update openssl
+      ansible.builtin.apt:
+        name: openssl
+        state: latest
+        update_cache: true

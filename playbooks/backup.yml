@@ -1,0 +1,11 @@
+# Backup: pull config files back to the controller side
+- name: Back up device config
+  hosts: "{{ target_site | default('all') }}"
+  become: true
+  tasks:
+    - name: Fetch sshd_config and motd
+      ansible.builtin.fetch:
+        src: "{{ item }}"
+        dest: "backups/{{ inventory_hostname }}/"
+        flat: false
+      loop: [/etc/ssh/sshd_config, /etc/motd]

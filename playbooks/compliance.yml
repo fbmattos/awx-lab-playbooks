@@ -1,0 +1,14 @@
+# Compliance: fail any host that allows root SSH login
+- name: SSH compliance check
+  hosts: "{{ target_site | default('all') }}"
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Read PermitRootLogin
+      ansible.builtin.command: sshd -T
+      register: sshd
+      changed_when: false
+    - name: Assert root login is disabled
+      ansible.builtin.assert:
+        that: "'permitrootlogin no' in sshd.stdout"
+        fail_msg: "{{ inventory_hostname }} allows root login"

@@ -1,0 +1,9 @@
+# Config change: set the login banner on one site or all
+- name: Set login banner
+  hosts: "{{ target_site | default('all') }}"
+  become: true
+  tasks:
+    - name: Write /etc/motd
+      ansible.builtin.copy:
+        dest: /etc/motd
+        content: "{{ banner_text | default('Authorized access only') }} ({{ site }})\n"
