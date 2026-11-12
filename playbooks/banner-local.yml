@@ -1,0 +1,16 @@
+# Same job as banner.yml, for hosts where we can't use SSH or sudo
+- name: Set login banner (local)
+  hosts: "{{ target_site | default('all') }}"
+  gather_facts: false
+  tasks:
+    - name: Write the banner
+      ansible.builtin.copy:
+        dest: /tmp/motd
+        content: "{{ banner_text | default('Authorized access only') }}\n"
+    - name: Read it back
+      ansible.builtin.command: cat /tmp/motd
+      register: motd
+      changed_when: false
+    - name: Show it
+      ansible.builtin.debug:
+        var: motd.stdout
